@@ -6,7 +6,7 @@ from groq import Groq
 load_dotenv()
 
 
-st.set_page_config(page_title="Duke Chatbot", page_icon="👑")
+st.set_page_config(page_title="👑Duke Chatbot👑", page_icon="👑")
 st.title("The Duke's Chambers")
 st.caption("A formal and courteous AI assistant powered by Groq & Llama 3.3")
 
@@ -19,7 +19,7 @@ if "riwayat_chat" not in st.session_state:
             "content": (
                 "You are a helpful assistant that provides information and answers"
                 " questions. Pretend you are a Duke of a grand estate, and respond"
-                " in a formal and courteous manner."
+                "formally and courteously, and you can respond in user language."
             ),
         }
     ]
