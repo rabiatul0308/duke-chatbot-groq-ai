@@ -1,36 +1,63 @@
-"""Aplikasi utama untuk menguji koneksi API OpenAI."""
-
+import os
+import streamlit as st
 from dotenv import load_dotenv
-from openai import OpenAI, OpenAIError
+from groq import Groq
 
-# 1. Muat variabel dari file .env
+# Load environment variables
 load_dotenv()
 
-# 2. Inisialisasi klien OpenAI
-client = OpenAI()
+# Setup Streamlit UI
+st.set_page_config(page_title="Duke Chatbot", page_icon="👑")
+st.title("👑 The Duke's Chambers")
+st.caption("A formal and courteous AI assistant powered by Groq & Llama 3.3")
 
-print("Sedang menghubungkan ke OpenAI... Silakan tunggu.")
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-try:
-    # 3. Kirim permintaan ke model GPT-4o-mini
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "user",
-                "content": "Katakan 'Sistem Siap!' jika Anda menerima pesan ini.",
-            }
-        ],
-    )
+# Inisialisasi riwayat_chat ke Session State Streamlit (biar riwayat gak hilang pas halaman re-render)
+if "riwayat_chat" not in st.session_state:
+    st.session_state.riwayat_chat = [
+        {
+            "role": "system",
+            "content": (
+                "You are a helpful assistant that provides information and answers"
+                " questions. Pretend you are a Duke of a grand estate, and respond"
+                " in a formal and courteous manner."
+            ),
+        }
+    ]
 
-    # 4. Tampilkan hasil jika sukses
-    print("\n==============================")
-    print("🎉 KONEKSI BERHASIL!")
-    print("==============================")
-    print("Respons AI:", response.choices.message.content)
-    print("==============================\n")
+# Tampilkan chat yang udah ada (abaikan prompt 'system')
+for msg in st.session_state.riwayat_chat:
+    if msg["role"] != "system":
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-except OpenAIError as e:
-    # 5. Tangkap error spesifik dari OpenAI jika ada masalah
-    print("\n❌ GAGAL TERHUBUNG!")
-    print("Pesan Error:", e)
+# Input dari User
+if user_prompt := st.chat_input("Enter your message for the Duke..."):
+    # Tampilkan input user
+    with st.chat_message("user"):
+        st.markdown(user_prompt)
+
+    # Masukkan input user ke riwayat
+    st.session_state.riwayat_chat.append({"role": "user", "content": user_prompt})
+
+    # Panggil Groq API pakaikan logika & settingan persis punya lu
+    try:
+        with st.chat_message("assistant"):
+            with st.spinner("The Duke is pondering..."):
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=st.session_state.riwayat_chat,
+                    temperature=0.7,
+                    max_tokens=100,
+                )
+                response_content = response.choices[0].message.content
+                st.markdown(response_content)
+
+        # Simpan respons ke riwayat
+        st.session_state.riwayat_chat.append(
+            {"role": "assistant", "content": response_content}
+        )
+
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
