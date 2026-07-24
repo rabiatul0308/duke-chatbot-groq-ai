@@ -6,9 +6,9 @@ from groq import Groq
 # Load environment variables
 load_dotenv()
 
-# Setup Streamlit UI
+
 st.set_page_config(page_title="Duke Chatbot", page_icon="👑")
-st.title("👑 The Duke's Chambers")
+st.title("The Duke's Chambers")
 st.caption("A formal and courteous AI assistant powered by Groq & Llama 3.3")
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
