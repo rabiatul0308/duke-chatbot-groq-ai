@@ -6,7 +6,7 @@ from groq import Groq
 load_dotenv()
 
 
-st.set_page_config(page_title="👑Duke Chatbot👑", page_icon="👑")
+st.set_page_config(page_title="👑""Duke Chatbot""👑", page_icon="👑")
 st.title("The Duke's Chambers")
 st.caption("A formal and courteous AI assistant powered by Groq & Llama 3.3")
 
