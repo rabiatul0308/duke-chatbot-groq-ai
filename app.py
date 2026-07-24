@@ -46,7 +46,7 @@ if user_prompt := st.chat_input("Enter your message for the Duke..."):
                     model="llama-3.3-70b-versatile",
                     messages=st.session_state.riwayat_chat,
                     temperature=0.7,
-                    max_tokens=100,
+                    max_tokens=2000,
                 )
                 response_content = response.choices[0].message.content
                 st.markdown(response_content)
