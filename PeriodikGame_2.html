@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tabel Periodik Pro - Pink Edition</title>
+    <style>
+        :root {
+            --bg-color: #fce7f3; 
+            --card-bg: #ffffff;  
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #ec4899;   
+            --accent-hover: #db2777;
+            --correct: #10b981;
+            --wrong: #ef4444;
+            --warning: #f59e0b;
+            
+            --alkali: #f43f5e;
+            --alkali-tanah: #fb923c;
+            --transisi: #facc15;
+            --post-transisi: #10b981;
+            --metaloid: #06b6d4;
+            --nonmetal: #3b82f6;
+            --gas-mulia: #a855f7;
+            --lantanida: #f472b6;
+            --aktinida: #fda4af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #be185d; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #9d174d;
+            font-size: 0.9rem;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        @media (min-width: 1024px) {
+            body { padding: 20px; }
+            h1 { font-size: 2.5rem; }
+            .game-container { grid-template-columns: 3.2fr 1fr; }
+            .left-panel { display: flex; flex-direction: column; gap: 15px; }
+        }
+
+        .dashboard {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.1);
+            border: 1px solid #fbcfe8;
+        }
+
+        @media (min-width: 640px) {
+            .dashboard { flex-direction: row; justify-content: space-between; align-items: center; }
+        }
+
+        .question-box {
+            flex: 1;
+        }
+
+        .question-box h2 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+        }
+
+        .target-element {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .action-and-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .action-and-stats { width: auto; flex-direction: row; align-items: center; gap: 15px; }
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            background-color: #fdf2f8;
+            color: #be185d;
+            border: 1px solid #fbcfe8;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-action:hover {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .stats {
+            display: flex;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 640px) {
+            .stats { width: auto; justify-content: flex-end; gap: 15px; }
+        }
+
+        .stat-item {
+            background: #fdf2f8;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid #fce7f3;
+            text-align: center;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .stat-item span {
+            color: var(--accent);
+            display: block;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .table-outer-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.1);
+            border: 1px solid #fbcfe8;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .periodic-table {
+            display: grid;
+            grid-template-columns: repeat(18, minmax(50px, 1fr));
+            grid-template-rows: repeat(7, 1fr) 0.3fr repeat(2, 1fr);
+            gap: 4px;
+            min-width: 980px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background-color: #fff5f5;
+            border: 1px solid #fee2e2;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative;
+        }
+
+        .cell:hover {
+            transform: scale(1.08);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+        }
+
+        .cell .number {
+            font-size: 0.65rem;
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            color: var(--text-muted);
+        }
+
+        .cell .symbol {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .cell .name {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .spacer { pointer-events: none; visibility: hidden; }
+
+        .alkali { border-top: 4px solid var(--alkali); }
+        .alkali-tanah { border-top: 4px solid var(--alkali-tanah); }
+        .transisi { border-top: 4px solid var(--transisi); }
+        .post-transisi { border-top: 4px solid var(--post-transisi); }
+        .metaloid { border-top: 4px solid var(--metaloid); }
+        .nonmetal { border-top: 4px solid var(--nonmetal); }
+        .gas-mulia { border-top: 4px solid var(--gas-mulia); }
+        .lantanida { border-top: 4px solid var(--lantanida); }
+        .aktinida { border-top: 4px solid var(--aktinida); }
+
+        .cell.correct-flash { background-color: var(--correct) !important; animation: pulse 0.4s ease-out; }
+        .cell.correct-flash .symbol, .cell.correct-flash .number, .cell.correct-flash .name { color: white !important; }
+        
+        .cell.wrong-flash { background-color: var(--wrong) !important; }
+        .cell.wrong-flash .symbol, .cell.wrong-flash .number, .cell.wrong-flash .name { color: white !important; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .edu-panel {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid #fbcfe8;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.1);
+        }
+
+        .edu-panel h3 {
+            font-size: 1.1rem;
+            border-bottom: 2px solid #fce7f3;
+            padding-bottom: 6px;
+            color: #be185d;
+        }
+
+        .info-card {
+            background: #fff1f2;
+            padding: 12px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .info-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            color: #9d174d;
+            font-weight: 700;
+        }
+
+        .selected-element-badge {
+            display: inline-block;
+            background-color: #be185d;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .example-box {
+            background-color: #ffffff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px dashed #fbcfe8;
+            font-size: 0.8rem;
+            color: #be185d;
+            font-weight: 500;
+        }
+
+        .legend-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        @media (min-width: 1024px) {
+            .legend-box { grid-template-columns: 1fr; }
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .legend-item:hover {
+            background: #fdf2f8;
+            border-color: #fbcfe8;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .scene {
+            display: none;
+            width: 100%;
+            max-width: 520px;
+            background: var(--card-bg);
+            padding: 25px 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #fbcfe8;
+            box-shadow: 0 20px 25px -5px rgba(236, 72, 153, 0.15);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .scene.active { display: block; }
+
+        .scene h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #be185d;
+        }
+
+        .scene p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .game-instructions {
+            background-color: #fff1f2;
+            border: 1px dashed #fbcfe8;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.82rem;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .game-instructions h4 {
+            color: #be185d;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        .game-instructions ul {
+            padding-left: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #9d174d;
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #fbcfe8;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-control:focus { border-color: var(--accent); }
+
+        .btn {
+            width: 100%;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover { background-color: var(--accent-hover); }
+        .btn:active { transform: scale(0.98); }
+        
+        .btn-secondary { background-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .btn-info-dev { background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
+        .btn-info-dev:hover { background-color: #fce7f3; }
+
+        .btn-next-question {
+            background-color: var(--correct);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            display: none;
+        }
+        .btn-next-question:hover { background-color: #059669; }
+
+        .dev-info-box { text-align: left; font-size: 0.85rem; color: var(--text-main); line-height: 1.6; }
+        .dev-header { border-bottom: 2px solid #fbcfe8; padding-bottom: 8px; margin-bottom: 12px; color: #be185d; font-weight: bold; font-size: 1.1rem; }
+        .skripsi-card { background: #fff1f2; border: 1px solid #ffe4e6; border-radius: 10px; padding: 12px; margin-bottom: 15px; }
+
+        .cv-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.85rem; }
+        .cv-table td { padding: 5px 0; vertical-align: top; }
+        .cv-table td:first-child { width: 32%; font-weight: 600; color: #9d174d; }
+
+        footer { margin-top: auto; padding-top: 30px; padding-bottom: 10px; text-align: center; font-size: 0.8rem; color: #9d174d; font-weight: 500; width: 100%; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(253, 242, 248, 0.8); backdrop-filter: blur(4px); z-index: 40; }
+        .overlay.active { display: block; }
+
+        .hidden-main { display: none !important; }
+        .visible-main { display: grid !important; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay active" id="bg-overlay"></div>
+
+    <div class="scene active" id="login-scene">
+        <h2>Selamat Datang!</h2>
+        <p>Silakan isi namamu dan pilih modul yang ingin kamu jalankan.</p>
+        
+        <div class="game-instructions">
+            <h4>💡 Mode Permainan:</h4>
+            <ul>
+                <li><b>Tantangan Pro:</b> Tebak posisi unsur sebelum waktu habis. Nyawa berkurang jika salah.</li>
+                <li><b>Modul Belajar (Bebas):</b> Eksplorasi seluruh isi tabel sepuasnya tanpa batasan waktu & skor untuk menghafal materi.</li>
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Nama Pemain</label>
+            <input type="text" id="username" class="input-control" placeholder="Masukkan namamu disini..." autocomplete="off">
+        </div>
+        <button class="btn" onclick="startGameSession('challenge')">⚔️ Main Tantangan Pro</button>
+        <button class="btn btn-secondary" style="background-color: #06b6d4;" onclick="startGameSession('learn')">📖 Masuk Modul Belajar</button>
+        <button class="btn btn-info-dev" onclick="openDevModal()">ℹ️ Info Dev</button>
+        <p style="font-size: 0.75rem; margin-top: 10px;">Copyright © 2026 | BY ANA</p>
+    </div>
+
+    <div class="scene" id="gameover-scene">
+        <h2 id="modal-title">Sesi Selesai!</h2>
+        <p id="modal-desc"></p>
+        <button class="btn" onclick="restartGameSession()">Main Lagi</button>
+        <button class="btn btn-secondary" onclick="backToMainMenu()">Kembali ke Menu Utama</button>
+    </div>
+
+    <div class="scene" id="pause-scene">
+        <h2>Game Dipause</h2>
+        <p>Sesi permainan sedang dihentikan sementara.</p>
+        <button class="btn" onclick="togglePauseGame()">Lanjutkan Game</button>
+        <button class="btn btn-secondary" onclick="backToMainMenu()">Kembali ke Menu Utama</button>
+    </div>
+
+    <div class="scene" id="dev-scene">
+        <h2>Profil Pengembang</h2>
+        <div class="dev-info-box" style="margin-top:15px;">
+            <div class="dev-header">Informasi</div>
+            <div class="skripsi-card">
+                <div class="skripsi-title">Kreator:</div>
+                <p style="font-style: italic; font-weight: 600; color:#1e293b;">
+                    Game ini dikembangkan murni untuk pengujian media pembelajaran interaktif tabel periodik agar seru dan tidak membosankan.
+                </p>
+            </div>
+            <table class="cv-table">
+                <tr><td>Nama Game</td><td>: Periodic Table Finder PRO</td></tr>
+                <tr><td>Instagram</td><td>: @xxibrnh</td></tr>
+                <tr><td>Alumni</td><td>: Universitas Muhammadiyah Jakarta</td></tr>
+            </table>
+        </div>
+        <button class="btn" onclick="closeDevModal()">Tutup Info</button>
+    </div>
+
+    <header class="hidden-main" id="main-header">
+        <h1 id="header-title">Periodic Table Finder PRO</h1>
+        <p>Halo <b id="player-name-tag" style="color:#be185d;">Ana</b>! Semangat belajar & menaklukkan sains!</p>
+    </header>
+
+    <div class="game-container hidden-main" id="main-game-container">
+        <div class="left-panel">
+            <div class="dashboard">
+                <div class="question-box">
+                    <h2 id="dashboard-mode-text">Cari Unsur Berikut:</h2>
+                    <div class="target-element" id="target-display">Mempersiapkan...</div>
+                    <button class="btn-next-question" id="next-question-btn" onclick="triggerNextQuestion()">Lanjut Pertanyaan Berikutnya ➔</button>
+                </div>
+                <div class="action-and-stats">
+                    <div class="control-buttons">
+                        <button class="btn-action" id="pause-btn" onclick="togglePauseGame()">⏸ Pause</button>
+                        <button class="btn-action" onclick="backToMainMenu()">🏠 Menu Utama</button>
+                    </div>
+                    <div class="stats" id="stats-area">
+                        <div class="stat-item" id="timer-box">Waktu<span id="timer-display">15</span></div>
+                        <div class="stat-item" id="score-box">Skor<span id="score-display">0</span></div>
+                        <div class="stat-item" id="lives-box">Nyawa<span id="lives-display">3</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-outer-wrapper">
+                <div class="periodic-table" id="table-grid"></div>
+            </div>
+        </div>
+
+        <div class="edu-panel">
+            <h3>Karakteristik Unsur</h3>
+            <div class="info-card" id="edu-card">
+                <div id="edu-element-badge"></div>
+                <h4 id="edu-title">Klik unsur atau kategori</h4>
+                <p id="edu-desc">Gunakan panel ini untuk mempelajari struktur kimia unsur, klasifikasi atom, dan fungsinya dalam industri sains.</p>
+                <div class="example-box" id="edu-example" style="display:none;"></div>
+            </div>
+
+            <h3>Daftar Golongan</h3>
+            <div class="legend-box">
+                <div class="legend-item" onclick="showGroupInfo('alkali')"><div class="legend-color" style="background: var(--alkali)"></div>Alkali (1A)</div>
+                <div class="legend-item" onclick="showGroupInfo('alkali-tanah')"><div class="legend-color" style="background: var(--alkali-tanah)"></div>Alkali Tanah (2A)</div>
+                <div class="legend-item" onclick="showGroupInfo('transisi')"><div class="legend-color" style="background: var(--transisi)"></div>Logam Transisi</div>
+                <div class="legend-item" onclick="showGroupInfo('post-transisi')"><div class="legend-color" style="background: var(--post-transisi)"></div>Pasca Transisi</div>
+                <div class="legend-item" onclick="showGroupInfo('metaloid')"><div class="legend-color" style="background: var(--metaloid)"></div>Metaloid</div>
+                <div class="legend-item" onclick="showGroupInfo('nonmetal')"><div class="legend-color" style="background: var(--nonmetal)"></div>Nonlogam Reaktif</div>
+                <div class="legend-item" onclick="showGroupInfo('gas-mulia')"><div class="legend-color" style="background: var(--gas-mulia)"></div>Gas Mulia (8A)</div>
+                <div class="legend-item" onclick="showGroupInfo('lantanida')"><div class="legend-color" style="background: var(--lantanida)"></div>Lantanida</div>
+                <div class="legend-item" onclick="showGroupInfo('aktinida')"><div class="legend-color" style="background: var(--aktinida)"></div>Aktinida</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Copyright © 2026 | Dikembangkan oleh Rabiatul Nurhasanah
+    </footer>
+
+    <script>
+        const groupInfo = {
+            "alkali": { title: "Logam Alkali (Golongan 1A)", desc: "Sangat reaktif, lunak, dan berdensitas rendah. Bereaksi hebat jika terkena air." },
+            "alkali-tanah": { title: "Logam Alkali Tanah (Golongan 2A)", desc: "Cukup reaktif namun stabil dibanding alkali. Memiliki titik lebur tinggi." },
+            "transisi": { title: "Logam Transisi (Blok-d)", desc: "Konduktor listrik & panas yang baik, keras, dan dapat membentuk senyawa berwarna indah." },
+            "post-transisi": { title: "Logam Pasca Transisi", desc: "Terletak di antara logam transisi & metaloid. Lebih lunak dengan titik leleh lebih rendah." },
+            "metaloid": { title: "Metaloid / Semimetal", desc: "Memiliki sifat peralihan. Bersifat semikonduktor, krusial untuk microchip elektronik." },
+            "nonmetal": { title: "Nonlogam Reaktif", desc: "Tidak menghantarkan listrik. Termasuk Halogen (7A) yang sangat reaktif menangkap elektron." },
+            "gas-mulia": { title: "Gas Mulia (Golongan 8A)", desc: "Sangat stabil (inert) karena kulit elektron terluarnya sudah penuh. Sulit bereaksi." },
+            "lantanida": { title: "Deret Lantanida", desc: "Logam tanah jarang (Rare Earth). Banyak dipakai dalam teknologi laser, magnet kuat, dan komponen gadget modern." },
+            "aktinida": { title: "Deret Aktinida", desc: "Seluruh unsurnya bersifat radioaktif karena inti atomnya tidak stabil. Contoh populer: Uranium dan Plutonium." }
+        };
+
+        const elementsData = [
+            // PERIODE 1
+            { num: 1, sym: "H", name: "Hidrogen", cat: "nonmetal", row: 1, col: 1, desc: "Unsur paling melimpah di alam semesta, sangat ringan dan mudah terbakar.", example: "Contoh: Bahan bakar roket hibrida dan industri amonia." },
+            { num: 2, sym: "He", name: "Helium", cat: "gas-mulia", row: 1, col: 18, desc: "Gas mulia ringan tidak berwarna yang tidak mudah terbakar.", example: "Contoh: Pengisi balon udara dan pendingin mesin MRI rumah sakit." },
+            
+            // PERIODE 2
+            { num: 3, sym: "Li", name: "Litium", cat: "alkali", row: 2, col: 1, desc: "Logam padat paling ringan dengan energi elektrokimia yang sangat tinggi.", example: "Contoh: Bahan utama baterai smartphone dan kendaraan listrik." },
+            { num: 4, sym: "Be", name: "Berilium", cat: "alkali-tanah", row: 2, col: 2, desc: "Logam ringan dan kaku, sangat beracun tetapi luar biasa kuat menahan beban panas.", example: "Contoh: Komponen cermin teleskop luar angkasa James Webb." },
+            { num: 5, sym: "B", name: "Boron", cat: "metaloid", row: 2, col: 13, desc: "Unsur metaloid keras penyedia ketahanan tinggi terhadap benturan suhu ekstrem.", example: "Contoh: Pembuatan alat laboratorium kaca borosilikat (Pyrex)." },
+            { num: 6, sym: "C", name: "Karbon", cat: "nonmetal", row: 2, col: 14, desc: "Unsur dasar kehidupan organik yang bisa membentuk struktur lunak hingga super keras.", example: "Contoh: Intan berlian, pensil grafit, dan serat karbon otomotif." },
+            { num: 7, sym: "N", name: "Nitrogen", cat: "nonmetal", row: 2, col: 15, desc: "Gas melimpah penyusun sekitar 78% dari total lapisan atmosfer bumi.", example: "Contoh: Pupuk urea tanaman dan cairan pembeku sampel medis." },
+            { num: 8, sym: "O", name: "Oksigen", cat: "nonmetal", row: 2, col: 16, desc: "Gas super reaktif yang esensial bagi respirasi makhluk hidup dan reaksi pembakaran.", example: "Contoh: Tabung oksigen medis dan agen oksidator bahan bakar." },
+            { num: 9, sym: "F", name: "Fluor", cat: "nonmetal", row: 2, col: 17, desc: "Unsur halogen paling elektronegatif dan sangat reaktif jika berdiri sendiri.", example: "Contoh: Senyawa fluoride pada pasta gigi untuk menguatkan email." },
+            { num: 10, sym: "Ne", name: "Neon", cat: "gas-mulia", row: 2, col: 18, desc: "Gas lembam (inert) yang memancarkan kilau kemerahan cerah saat diberi daya listrik.", example: "Contoh: Lampu dekorasi reklame pertokoan malam hari." },
+            
+            // PERIODE 3
+            { num: 11, sym: "Na", name: "Natrium", cat: "alkali", row: 3, col: 1, desc: "Logam alkali lunak berwarna perak yang bereaksi meledak jika terkena air.", example: "Contoh: Komponen pembentuk garam dapur (NaCl) dan lampu jalanan konvensional." },
+            { num: 12, sym: "Mg", name: "Magnesium", cat: "alkali-tanah", row: 3, col: 2, desc: "Logam struktural ringan pembentuk klorofil tanaman, terbakar dengan cahaya putih.", example: "Contoh: Blok mesin balap, kerangka laptop premium, dan suplemen otot." },
+            { num: 13, sym: "Al", name: "Aluminium", cat: "post-transisi", row: 3, col: 13, desc: "Logam pasca-transisi yang melimpah, sangat ringan, dan tahan korosi karat.", example: "Contoh: Aluminium foil wadah makanan, kaleng, dan bodi pesawat." },
+            { num: 14, sym: "Si", name: "Silikon", cat: "metaloid", row: 3, col: 14, desc: "Semikonduktor melimpah dari pasir, menjadi pondasi utama era digital komputer.", example: "Contoh: Mikroprosesor sirkuit elektronik dan panel surya." },
+            { num: 15, sym: "P", name: "Fosfor", cat: "nonmetal", row: 3, col: 15, desc: "Nonlogam reaktif pembentuk tulang dan rantai DNA makhluk hidup.", example: "Contoh: Kepala korek api kayu dan bahan baku pupuk fosfat." },
+            { num: 16, sym: "S", name: "Belerang", cat: "nonmetal", row: 3, col: 16, desc: "Padatan kuning vulkanik berbau khas yang krusial untuk industri kimia dasar.", example: "Contoh: Pembuatan asam sulfat industri dan salep kulit antimikroba." },
+            { num: 17, sym: "Cl", name: "Klorin", cat: "nonmetal", row: 3, col: 17, desc: "Gas halogen kuning kehijauan berbau tajam yang ampuh membunuh bakteri.", example: "Contoh: Cairan pemutih pakaian dan disinfektan kolam renang." },
+            { num: 18, sym: "Ar", name: "Argon", cat: "gas-mulia", row: 3, col: 18, desc: "Gas mulia melimpah yang dipakai untuk membuat ruang hampa pelindung.", example: "Contoh: Pengisi bagian dalam bola lampu pijar agar filamen tidak cepat putus." },
+            
+            // PERIODE 4
+            { num: 19, sym: "K", name: "Kalium", cat: "alkali", row: 4, col: 1, desc: "Logam alkali penting penyeimbang cairan elektrolit di dalam sel tubuh.", example: "Contoh: Kandungan utama pupuk NPK dan suplemen nutrisi jantung." },
+            { num: 20, sym: "Ca", name: "Kalsium", cat: "alkali-tanah", row: 4, col: 2, desc: "Logam alkali tanah esensial penyusun utama struktur tulang, gigi, dan batuan.", example: "Contoh: Semen konstruksi, kapur tulis, dan kalsium susu." },
+            { num: 21, sym: "Sc", name: "Skandium", cat: "transisi", row: 4, col: 3, desc: "Logam transisi jarang untuk meningkatkan ketahanan mekanik logam paduan.", example: "Contoh: Komponen kerangka sepeda balap performa tinggi dan lampu stadion." },
+            { num: 22, sym: "Ti", name: "Titanium", cat: "transisi", row: 4, col: 4, desc: "Logam sekuat baja dengan bobot jauh lebih ringan serta sangat tahan karat.", example: "Contoh: Implan tulang medis artifisial dan turbin jet pesawat." },
+            { num: 23, sym: "V", name: "Vanadium", cat: "transisi", row: 4, col: 5, desc: "Logam keras yang ditambahkan ke baja agar tahan guncangan mekanik hebat.", example: "Contoh: Perkakas pertukangan (kunci pas) dan poros roda mobil." },
+            { num: 24, sym: "Cr", name: "Kromium", cat: "transisi", row: 4, col: 6, desc: "Logam transisi berkilau keperakan yang memberikan lapisan pelindung anti-karat.", example: "Contoh: Lapisan mengkilap knalpot motor dan pembuatan stainless steel." },
+            { num: 25, sym: "Mn", name: "Mangan", cat: "transisi", row: 4, col: 7, desc: "Unsur krusial untuk menghilangkan kotoran belerang saat peleburan besi industri.", example: "Contoh: Rel kereta api tahan benturan baja berat dan batu baterai alkaline." },
+            { num: 26, sym: "Fe", name: "Besi", cat: "transisi", row: 4, col: 8, desc: "Logam struktural utama peradaban, pengikat oksigen di dalam darah.", example: "Contoh: Tiang konstruksi bangunan, jembatan, dan inti hemoglobin." },
+            { num: 27, sym: "Co", name: "Kobalt", cat: "transisi", row: 4, col: 9, desc: "Logam magnetik kuat berwarna abu keperakan yang tahan suhu ekstrem tinggi.", example: "Contoh: Campuran katoda baterai lithium-ion modern gadget." },
+            { num: 28, sym: "Ni", name: "Nikel", cat: "transisi", row: 4, col: 10, desc: "Logam berkilau anti-korosi, salah satu komoditas industri terbesar Indonesia.", example: "Contoh: Koin logam uang, kawat elemen pemanas, dan baterai kendaraan listrik." },
+            { num: 29, sym: "Cu", name: "Tembaga", cat: "transisi", row: 4, col: 11, desc: "Logam konduktor listrik papan atas yang sangat fleksibel dan mudah ditarik.", example: "Contoh: Inti tembaga kabel transmisi listrik dan pipa pendingin AC." },
+            { num: 30, sym: "Zn", name: "Seng", cat: "transisi", row: 4, col: 12, desc: "Logam transisi pelapis logam lain agar terhindar dari proses oksidasi udara.", example: "Contoh: Atap rumah seng gelombang dan suplemen penjaga sistem imun tubuh." },
+            { num: 31, sym: "Ga", name: "Galium", cat: "post-transisi", row: 4, col: 13, desc: "Logam unik berkilau yang bisa mencair spontan di atas telapak tangan manusia.", example: "Contoh: Sensor termometer suhu tinggi dan chip semikonduktor GaAs." },
+            { num: 32, sym: "Ge", name: "Germanium", cat: "metaloid", row: 4, col: 14, desc: "Metaloid semikonduktor transparan terhadap radiasi gelombang inframerah.", example: "Contoh: Serat optik jaringan internet cepat dan lensa teropong malam." },
+            { num: 33, sym: "As", name: "Arsenik", cat: "metaloid", row: 4, col: 15, desc: "Metaloid terkenal beracun yang digunakan dalam dosis mikro industri elektronika.", example: "Contoh: Bahan pengeras paduan logam timbal dan dopan semikonduktor." },
+            { num: 34, sym: "Se", name: "Selenium", cat: "nonmetal", row: 4, col: 16, desc: "Nonlogam dengan sifat fotokonduktif (menghantarkan listrik lebih baik saat kena cahaya).", example: "Contoh: Komponen mesin fotokopi dan sel pembangkit listrik tenaga surya." },
+            { num: 35, sym: "Br", name: "Bromin", cat: "nonmetal", row: 4, col: 17, desc: "Satu-satunya unsur nonlogam berwujud cair kemerahan tebal pada suhu ruang.", example: "Contoh: Bahan aditif penahan api (flame retardant) plastik sirkuit." },
+            { num: 36, sym: "Kr", name: "Kripton", cat: "gas-mulia", row: 4, col: 18, desc: "Gas mulia berat yang menghasilkan pendaran cahaya putih intensitas tinggi.", example: "Contoh: Lampu landasan pacu bandara udara dan flash kamera profesional." },
+            
+            // PERIODE 5
+            { num: 37, sym: "Rb", name: "Rubidium", cat: "alkali", row: 5, col: 1, desc: "Logam alkali sangat reaktif yang langsung menyala spontan di udara lembap.", example: "Contoh: Digunakan dalam penelitian osilator laser dan sel fotolistrik." },
+            { num: 38, sym: "Sr", name: "Stronsium", cat: "alkali-tanah", row: 5, col: 2, desc: "Logam alkali tanah yang memberikan warna nyala merah kirmizi pekat.", example: "Contoh: Pewarna merah kembang api festival dan suplemen penguat tulang." },
+            { num: 39, sym: "Y", name: "Ytrium", cat: "transisi", row: 5, col: 3, desc: "Logam transisi untuk memperkuat kinerja material superkonduktor dan optik.", example: "Contoh: Bahan kristal laser YAG untuk pemotongan logam industri." },
+            { num: 40, sym: "Zr", name: "Zirkonium", cat: "transisi", row: 5, col: 4, desc: "Logam yang luar biasa tahan karat asam korosif dan paparan panas reaktor.", example: "Contoh: Selubung luar bahan bakar nuklir dan perhiasan cubic zirconia." },
+            { num: 41, sym: "Nb", name: "Niobium", cat: "transisi", row: 5, col: 5, desc: "Logam transisi dengan sifat superkonduktor andal pada suhu sangat dingin.", example: "Contoh: Magnet raksasa mesin pemindai MRI dan akselerator partikel." },
+            { num: 42, sym: "Mo", name: "Molibdenum", cat: "transisi", row: 5, col: 6, desc: "Logam dengan titik lebur super tinggi, meningkatkan kekerasan baja struktural.", example: "Contoh: Alat bor kecepatan tinggi, bagian rudal, dan mesin jet." },
+            { num: 43, sym: "Tc", name: "Teknesium", cat: "transisi", row: 5, col: 7, desc: "Unsur buatan manusia pertama di tabel periodik yang seluruh isotopnya radioaktif.", example: "Contoh: Isotop pelacak (tracer) diagnosis kanker medis rumah sakit." },
+            { num: 44, sym: "Ru", name: "Rutenium", cat: "transisi", row: 5, col: 8, desc: "Logam transisi golongan platina yang efektif meningkatkan ketahanan aus.", example: "Contoh: Lapisan kontak listrik mikroelektronika sensitif tegangan." },
+            { num: 45, sym: "Rh", name: "Rhodium", cat: "transisi", row: 5, col: 9, desc: "Salah satu logam paling langka, berharga mahal, dan reflektif di dunia.", example: "Contoh: Katalitik konverter mobil penekan emisi racun gas buang." },
+            { num: 46, sym: "Pd", name: "Paladium", cat: "transisi", row: 5, col: 10, desc: "Logam transisi berkilau yang mampu menyerap gas hidrogen volume besar.", example: "Contoh: Komponen kapasitor elektro sirkuit komputer dan perhiasan palladium." },
+            { num: 47, sym: "Ag", name: "Perak", cat: "transisi", row: 5, col: 11, desc: "Logam mulia pemilik tingkat konduktivitas listrik paling tinggi di bumi.", example: "Contoh: Jalur penghantar panel surya, cermin jernih, dan perhiasan." },
+            { num: 48, sym: "Cd", name: "Kadmium", cat: "transisi", row: 5, col: 12, desc: "Logam transisi beracun berdensitas tinggi penyerap partikel neutron reaktor.", example: "Contoh: Batang pengendali reaktor nuklir dan baterai Ni-Cd lama." },
+            { num: 49, sym: "In", name: "Indium", cat: "post-transisi", row: 5, col: 13, desc: "Logam pasca-transisi lunak yang mengalirkan arus listrik di atas lapisan kaca.", example: "Contoh: Lapisan Indium Tin Oxide (ITO) pembentuk sensor layar sentuh HP." },
+            { num: 50, sym: "Sn", name: "Timah", cat: "post-transisi", row: 5, col: 14, desc: "Logam lunak tahan korosi, menjadi komoditas ekspor andalan Pulau Bangka Belitung.", example: "Contoh: Timah solder perakit sirkuit PCB elektro dan kaleng makanan." },
+            { num: 51, sym: "Sb", name: "Antimon", cat: "metaloid", row: 5, col: 15, desc: "Metaloid pengeras yang memperkuat ketahanan mekanik logam timbal standar.", example: "Contoh: Bahan campuran pelat internal sel aki asam-timbal kendaraan." },
+            { num: 52, sym: "Te", name: "Telurium", cat: "metaloid", row: 5, col: 16, desc: "Metaloid semi-logam langka untuk pengkondisian efisiensi listrik panel surya.", example: "Contoh: Lapisan solar cell film tipis CdTe (Cadmium Telluride)." },
+            { num: 53, sym: "I", name: "Iodin", cat: "nonmetal", row: 5, col: 17, desc: "Halogen nonlogam pembentuk uap ungu gelap yang vital untuk kelenjar tiroid.", example: "Contoh: Cairan antiseptik pembersih luka terbuka (Betadine)." },
+            { num: 54, sym: "Xe", name: "Xenon", cat: "gas-mulia", row: 5, col: 18, desc: "Gas mulia berat penyuplai pendaran cahaya biru-keunguan intensitas ultra.", example: "Contoh: Lampu depan kendaraan mewah High-Intensity Discharge (HID)." },
+            
+            // PERIODE 6
+            { num: 55, sym: "Cs", name: "Sesium", cat: "alkali", row: 6, col: 1, desc: "Logam alkali paling reaktif, mendidih di suhu ruangan hangat.", example: "Contoh: Standar getaran atom internal pengatur jam atom presisi tinggi global." },
+            { num: 56, sym: "Ba", name: "Barium", cat: "alkali-tanah", row: 6, col: 2, desc: "Logam alkali tanah berkilau keperakan reaktif penyerap radiasi Sinar-X.", example: "Contoh: Cairan kontras yang diminum pasien sebelum rontgen lambung." },
+            { num: 72, sym: "Hf", name: "Hafnium", cat: "transisi", row: 6, col: 4, desc: "Logam transisi dengan penampang penyerap partikel neutron yang luar biasa besar.", example: "Contoh: Batang kendali reaktor nuklir kapal selam militer." },
+            { num: 73, sym: "Ta", name: "Tantalum", cat: "transisi", row: 6, col: 5, desc: "Logam transisi sangat tahan korosi kimia asam, titik lebur di atas 3000 derajat.", example: "Contoh: Kapasitor mini pengatur daya di motherboard smartphone." },
+            { num: 74, sym: "W", name: "Wolfram", cat: "transisi", row: 6, col: 6, desc: "Logam dengan titik lebur paling tinggi di dunia, mencapai 3.422°C.", example: "Contoh: Filamen kawat lampu pijar klasik dan mata bor industri baja." },
+            { num: 75, sym: "Re", name: "Rhenium", cat: "transisi", row: 6, col: 7, desc: "Logam transisi super padat yang mencegah deformasi logam akibat gesekan panas.", example: "Contoh: Bahan pembuatan bilah turbin mesin jet pesawat komersial." },
+            { num: 76, sym: "Os", name: "Osmium", cat: "transisi", row: 6, col: 8, desc: "Unsur alami berdensitas paling padat, berat, dan kaku di tabel periodik.", example: "Contoh: Jarum pemutar piringan hitam klasik dan instrumen presisi tinggi." },
+            { num: 77, sym: "Ir", name: "Iridium", cat: "transisi", row: 6, col: 9, desc: "Logam paling tahan korosi di dunia, tidak terpengaruh asam pekat apa pun.", example: "Contoh: Elektroda busi kendaraan balap formula berperforma ekstrem." },
+            { num: 78, sym: "Pt", name: "Platina", cat: "transisi", row: 6, col: 10, desc: "Logam mulia putih keperakan lembam yang bernilai investasi tinggi.", example: "Contoh: Cincin perhiasan mewah dan peralatan cawan laboratorium kimia." },
+            { num: 79, sym: "Au", name: "Emas", cat: "transisi", row: 6, col: 11, desc: "Logam mulia ikonik, anti-karat abadi, konduktor mikro yang sangat lunak.", example: "Contoh: Emas batangan logam mulia dan konektor chip elektronik premium." },
+            { num: 80, sym: "Hg", name: "Raksa", cat: "transisi", row: 6, col: 12, desc: "Satu-satunya unsur logam yang berwujud cair pada suhu ruangan normal.", example: "Contoh: Pengisi tabung termometer suhu badan konvensional dan barometer." },
+            { num: 81, sym: "Tl", name: "Talium", cat: "post-transisi", row: 6, col: 13, desc: "Logam pasca-transisi super lembut yang sangat toksik bagi metabolisme.", example: "Contoh: Bahan pembuatan lensa kaca optik kamera berspesifikasi khusus." },
+            { num: 82, sym: "Pb", name: "Timbal", cat: "post-transisi", row: 6, col: 14, desc: "Logam berat sangat padat penahan rambatan radiasi elektromagnetik berbahaya.", example: "Contoh: Rompi pelindung tubuh dokter ruang radiologi Sinar-X (Rontgen)." },
+            { num: 83, sym: "Bi", name: "Bismut", cat: "post-transisi", row: 6, col: 15, desc: "Logam pasca-transisi unik paling aman (tidak beracun) di golongan logam berat.", example: "Contoh: Bahan utama sirup obat pereda nyeri lambung (Pepto-Bismol)." },
+            { num: 84, sym: "Po", name: "Polonium", cat: "metaloid", row: 6, col: 16, desc: "Metaloid radioaktif super langka yang melepaskan energi panas partikel alfa masif.", example: "Contoh: Sumber pemanas sirkuit internal wahana penjelajah antariksa." },
+            { num: 85, sym: "At", name: "Astatin", cat: "metaloid", row: 6, col: 17, desc: "Unsur alami paling langka di kerak bumi dengan sifat radioaktif tidak stabil.", example: "Contoh: Sedang dikembangkan dalam riset terapi kanker bertarget radiasi alfa." },
+            { num: 86, sym: "Rn", name: "Radon", cat: "gas-mulia", row: 6, col: 18, desc: "Gas mulia radioaktif berat tak terlihat yang merembes keluar dari batuan bumi.", example: "Contoh: Alat pelacak pergeseran patahan bumi untuk prediksi gempa." },
+            
+            // PERIODE 7
+            { num: 87, sym: "Fr", name: "Fransium", cat: "alkali", row: 7, col: 1, desc: "Logam alkali radioaktif yang meluruh cepat, eksistensinya sangat singkat.", example: "Contoh: Hanya diproduksi beberapa atom di laboratorium untuk riset fisika." },
+            { num: 88, sym: "Ra", name: "Radium", cat: "alkali-tanah", row: 7, col: 2, desc: "Logam alkali tanah radioaktif kuat, ditemukan oleh fisikawan Marie Curie.", example: "Contoh: Dulu dipakai sebagai cat fosfor menyala pada jarum jam kuno." },
+            { num: 104, sym: "Rf", name: "Ruterfordium", cat: "transisi", row: 7, col: 4, desc: "Unsur sintetis radioaktif buatan yang meluruh dalam hitungan detik.", example: "Contoh: Murni subjek penelitian laboratorium fisika inti/nuklir." },
+            { num: 105, sym: "Db", name: "Dubnium", cat: "transisi", row: 7, col: 5, desc: "Unsur super berat buatan lewat penembakan atom sasaran di siklotron.", example: "Contoh: Objek studi kestabilan struktur inti atom berat." },
+            { num: 106, sym: "Sg", name: "Seaborgium", cat: "transisi", row: 7, col: 6, desc: "Unsur transuranium sintetis radioaktif berwaktu paruh sangat pendek.", example: "Contoh: Riset lanjut pembuktian teori mekanika kuantum inti atom." },
+            { num: 107, sym: "Bh", name: "Bohrium", cat: "transisi", row: 7, col: 7, desc: "Unsur buatan yang dinamai dari fisikawan legendaris Niels Bohr.", example: "Contoh: Studi experimental kimia transdisiplin laboratorium nuklir." },
+            { num: 108, sym: "Hs", name: "Hassium", cat: "transisi", row: 7, col: 8, desc: "Unsur transisi transi-uranium buatan yang meluruh memancarkan partikel alfa.", example: "Contoh: Target penelitian sintesis unsur baru super berat." },
+            { num: 109, sym: "Mt", name: "Meitnerium", cat: "transisi", row: 7, col: 9, desc: "Unsur sintetis sangat radioaktif hasil penggabungan paksa inti atom besi dan bismut.", example: "Contoh: Studi fundamental perilaku gaya tarik kuat nuklir eksperimental." },
+            { num: 110, sym: "Ds", name: "Darmstadtium", cat: "transisi", row: 7, col: 10, desc: "Unsur buatan super berat yang pertama kali disintesis di kota Darmstadt, Jerman.", example: "Contoh: Evaluasi akselerator partikel ion berat." },
+            { num: 111, sym: "Rg", name: "Roentgenium", cat: "transisi", row: 7, col: 11, desc: "Unsur sintetis radioaktif yang dinamai untuk menghormati penemu Sinar-X.", example: "Contoh: Riset fisika nuklir tingkat lanjut internasional." },
+            { num: 112, sym: "Cn", name: "Kopernisium", cat: "transisi", row: 7, col: 12, desc: "Unsur super berat radioaktif yang diperkirakan berwujud cair volatil.", example: "Contoh: Analisis tren periodisitas kimia golongan gas mulia/raksa." },
+            { num: 113, sym: "Nh", name: "Nihonium", cat: "post-transisi", row: 7, col: 13, desc: "Unsur super berat pertama yang resmi ditemukan oleh ilmuwan dari benua Asia (Jepang).", example: "Contoh: Kajian ilmiah peluruhan berantai unsur transuranium." },
+            { num: 114, sym: "Fl", name: "Flerovium", cat: "post-transisi", row: 7, col: 14, desc: "Unsur buatan super berat yang diuji kestabilan nuklirnya di reaktor.", example: "Contoh: Pembuktian hipotesis 'Island of Stability' dalam fisika inti." },
+            { num: 115, sym: "Mc", name: "Moskovium", cat: "post-transisi", row: 7, col: 15, desc: "Unsur sintetis radioaktif super berat hasil kolaborasi ilmuwan Rusia-AS.", example: "Contoh: Pengujian reaksi fusi nuklir elemen buatan." },
+            { num: 116, sym: "Lv", name: "Livermorium", cat: "post-transisi", row: 7, col: 16, desc: "Unsur super berat buatan laboratorium dengan waktu paruh milidetik.", example: "Contoh: Riset peluruhan radioaktif tingkat lanjut." },
+            { num: 117, sym: "Ts", name: "Tenisin", cat: "nonmetal", row: 7, col: 17, desc: "Unsur halogen sintetis terbaru yang posisinya berada di bawah iodin.", example: "Contoh: Penelitian perilaku kimia elemen berat golongan VIIA." },
+            { num: 118, sym: "Og", name: "Oganeson", cat: "gas-mulia", row: 7, col: 18, desc: "Unsur penutup nomor atom tertinggi (118) di tabel periodik modern saat ini.", example: "Contoh: Subjek utama riset efek relativistik elektron kulit terluar." },
+            
+            // DERET LANTANIDA (BARIS 9)
+            { num: 57, sym: "La", name: "Lantanum", cat: "lantanida", row: 9, col: 4, desc: "Logam tanah jarang (Rare Earth Metal) pemicu awal deret lantanida.", example: "Contoh: Bahan pembuatan lensa kamera premium bebas distorsi optik." },
+            { num: 58, sym: "Ce", name: "Serium", cat: "lantanida", row: 9, col: 5, desc: "Logam lantanida paling melimpah, mudah memercikkan api saat digesek keras.", example: "Contoh: Komponen batu pemantik korek api gas (flint metal)." },
+            { num: 59, sym: "Pr", name: "Praseodimum", cat: "lantanida", row: 9, col: 6, desc: "Logam lantanida lunak pemberi warna hijau bersih pada material kaca.", example: "Contoh: Kacamata pelindung khusus untuk pekerja las pabrik baja." },
+            { num: 60, sym: "Nd", name: "Neodimidium", cat: "lantanida", row: 9, col: 7, desc: "Logam tanah jarang pembuat komponen magnet permanen terkuat di dunia saat ini.", example: "Contoh: Magnet mikro speaker smartphone, harddisk, dan motor drone." },
+            { num: 61, sym: "Pm", name: "Prometium", cat: "lantanida", row: 9, col: 8, desc: "Satu-satunya lantanida radioaktif murni yang tidak ditemukan alami di kerak bumi.", example: "Contoh: Sumber energi mikro baterai nuklir penjelajah ruang angkasa." },
+            { num: 62, sym: "Sm", name: "Samarium", cat: "lantanida", row: 9, col: 9, desc: "Logam tanah jarang penahan demagnetisasi pada temperatur operasi tinggi.", example: "Contoh: Magnet permanen blok mesin jet dan sistem radar militer." },
+            { num: 63, sym: "Eu", name: "Europium", cat: "lantanida", row: 9, col: 10, desc: "Lantanida paling reaktif yang sangat mahir memancarkan pendaran cahaya fosfor.", example: "Contoh: Zat pengaman anti-pemalsuan pada tinta cetak uang kertas Euro." },
+            { num: 64, sym: "Gd", name: "Gadolinium", cat: "lantanida", row: 9, col: 11, desc: "Logam tanah jarang dengan karakteristik magnetik unik untuk mempertajam kontras.", example: "Contoh: Cairan kontras intravena suntik sebelum pemindaian MRI." },
+            { num: 65, sym: "Tb", name: "Terbium", cat: "lantanida", row: 9, col: 12, desc: "Logam deret lantanida pemancar spektrum warna hijau stabil performa tinggi.", example: "Contoh: Fosfor pengisi layar monitor OLED tablet dan TV premium." },
+            { num: 66, sym: "Dy", name: "Disprosium", cat: "lantanida", row: 9, col: 13, desc: "Logam tanah jarang yang berfungsi menstabilkan magnet neodimium dari panas.", example: "Contoh: Motor penggerak mobil listrik hybrid generasi baru." },
+            { num: 67, sym: "Ho", name: "Holmium", cat: "lantanida", row: 9, col: 14, desc: "Unsur pemilik kemampuan konsentrasi medan magnet tertinggi dari semua unsur.", example: "Contoh: Pengarah medan magnet internal mesin laser medis bedah." },
+            { num: 68, sym: "Er", name: "Erbium", cat: "lantanida", row: 9, col: 15, desc: "Logam penyedia penguatan sinyal data optik tanpa mengubahnya jadi listrik.", example: "Contoh: Penguat sinyal kabel serat optik bawah laut lintas benua." },
+            { num: 69, sym: "Tm", name: "Tulium", cat: "lantanida", row: 9, col: 16, desc: "Salah satu lantanida paling langka dan mahal yang mengeluarkan sinar-X portabel.", example: "Contoh: Mesin rontgen portable tanpa listrik untuk wilayah bencana." },
+            { num: 70, sym: "Yb", name: "Yterbium", cat: "lantanida", row: 9, col: 17, desc: "Logam yang resistensi listriknya berubah drastis akibat tekanan mekanik makro.", example: "Contoh: Sensor pendeteksi kekuatan getaran gempa bumi bawah tanah." },
+            { num: 71, sym: "Lu", name: "Lutetium", cat: "lantanida", row: 9, col: 18, desc: "Unsur terberat dan paling keras di dalam rumpun deret lantanida.", example: "Contoh: Detektor radiasi pada mesin pemindai medis PET Scan." },
+            
+            // DERET AKTINIDA (BARIS 10)
+            { num: 89, sym: "Ac", name: "Aktinium", cat: "aktinida", row: 10, col: 4, desc: "Logam aktinida radioaktif kuat pembuka deret bawah tabel periodik.", example: "Contoh: Agen pemancar partikel alfa bertarget terapi kanker kedokteran nuklir." },
+            { num: 90, sym: "Th", name: "Torium", cat: "aktinida", row: 10, col: 5, desc: "Logam aktinida melimpah, kandidat terkuat bahan bakar nuklir alternatif masa depan.", example: "Contoh: Bahan bakar PLTN siklus torium yang jauh lebih aman dari uranium." },
+            { num: 91, sym: "Pa", name: "Protaktinium", cat: "aktinida", row: 10, col: 6, desc: "Unsur radioaktif super langka dan sangat toksik hasil peluruhan alami uranium.", example: "Contoh: Penentuan penanggalan geologis sedimen laut dalam kuno." },
+            { num: 92, sym: "U", name: "Uranium", cat: "aktinida", row: 10, col: 7, desc: "Logam berat radioaktif padat yang menjadi bahan baku utama fisi nuklir.", example: "Contoh: Bahan bakar utama Pembangkit Listrik Tenaga Nuklir (PLTN)." },
+            { num: 93, sym: "Np", name: "Neptunium", cat: "aktinida", row: 10, col: 8, desc: "Unsur aktinida buatan pertama transuranium yang terbentuk di dalam reaktor.", example: "Contoh: Komponen instrumen detektor partikel neutron energi tinggi." },
+            { num: 94, sym: "Pu", name: "Plutonium", cat: "aktinida", row: 10, col: 9, desc: "Unsur fisil radioaktif buatan yang menghasilkan energi termal konstan masif.", example: "Contoh: Generator termoelektrik (RTG) penyuplai listrik robot Mars Rover NASA." },
+            { num: 95, sym: "Am", name: "Amerisium", cat: "aktinida", row: 10, col: 10, desc: "Unsur aktinida buatan yang partikel alfasinya mendeteksi partikel karbon udara.", example: "Contoh: Komponen sensor detektor asap kebakaran otomatis di plafon gedung." },
+            { num: 96, sym: "Cm", name: "Kurium", cat: "aktinida", row: 10, col: 11, desc: "Unsur radioaktif kuat penyedia partikel alfa untuk analisis instrumen robotik.", example: "Contoh: Sensor spektrometer penilai komposisi batuan di misi luar angkasa." },
+            { num: 97, sym: "Bk", name: "Berkelium", cat: "aktinida", row: 10, col: 12, desc: "Unsur aktinida sintetis bernomor atom 97 yang dinamai dari kota Berkeley.", example: "Contoh: Sintesis pembuatan unsur baru yang lebih berat di akselerator." },
+            { num: 98, sym: "Cf", name: "Kalifornium", cat: "aktinida", row: 10, col: 13, desc: "Unsur pemancar neutron super padat, memicu reaksi berantai secara instan.", example: "Contoh: Alat deteksi kadar air minyak bumi dan pemicu awal reaktor nuklir." },
+            { num: 99, sym: "Es", name: "Einsteinium", cat: "aktinida", row: 10, col: 14, desc: "Unsur buatan yang ditemukan dari puing ledakan bom hidrogen pertama tahun 1952.", example: "Contoh: Murni subjek penelitian sifat peluruhan fisik nuklir dasar." },
+            { num: 100, sym: "Fm", name: "Fermium", cat: "aktinida", row: 10, col: 15, desc: "Unsur terberat di tabel periodik yang bisa dibuat melalui penembakan neutron makro.", example: "Contoh: Studi teoritis perilaku kimiawi atom-atom bernomor masif." },
+            { num: 101, sym: "Md", name: "Mendelevium", cat: "aktinida", row: 10, col: 16, desc: "Unsur yang dinamai sebagai bentuk penghormatan bagi Dmitri Mendeleev (bapak tabel periodik).", example: "Contoh: Penelitian struktur orbital elektron elemen berat." },
+            { num: 102, sym: "No", name: "Nobelium", cat: "aktinida", row: 10, col: 17, desc: "Unsur aktinida radioaktif sintetis yang dinamai berdasarkan Alfred Nobel.", example: "Contoh: Eksperimen fusi ion berat di laboratorium nuklir terpadu." },
+            { num: 103, sym: "Lr", name: "Lawrensium", cat: "aktinida", row: 10, col: 18, desc: "Unsur radioaktif buatan terakhir yang menjadi penutup deret rumpun aktinida.", example: "Contoh: Evaluasi sifat kimia fisika akhir rumpun aktinida." }
+        ];
+
+        let currentMode = 'challenge'; 
+        let score = 0;
+        let lives = 3;
+        let timeLeft = 15;
+        let timerInterval = null;
+        let currentTarget = null;
+        let isGamePaused = false;
+        let isWaitingForNext = false; 
+
+        function initPeriodicTableGrid() {
+            const grid = document.getElementById('table-grid');
+            grid.innerHTML = '';
+
+            // Menggunakan 10 baris agar menampung deret Lantanida (9) & Aktinida (10)
+            const tableMap = Array(10).fill(null).map(() => Array(18).fill(null));
+            elementsData.forEach(el => {
+                tableMap[el.row - 1][el.col - 1] = el;
+            });
+
+            for (let r = 0; r < 10; r++) {
+                for (let c = 0; c < 18; c++) {
+                    const el = tableMap[r][c];
+                    if (el) {
+                        const cell = document.createElement('div');
+                        cell.className = `cell ${el.cat}`;
+                        cell.id = `cell-${el.num}`;
+                        cell.innerHTML = `
+                            <span class="number">${el.num}</span>
+                            <span class="symbol">${el.sym}</span>
+                            <span class="name">${el.name}</span>
+                        `;
+                        cell.onclick = () => handleCellClick(el);
+                        grid.appendChild(cell);
+                    } else {
+                        const spacer = document.createElement('div');
+                        spacer.className = 'spacer';
+                        grid.appendChild(spacer);
+                    }
+                }
+            }
+        }
+
+      function startGameSession() {
+            const usernameInput = document.getElementById('username').value.trim();
+        const playerName = usernameInput;
+            if (usernameInput === "") {
+                alert("Harap masukkan nama kamu terlebih dahulu ya!");
+                return;
+            }
+            document.getElementById('player-name-tag').textContent = playerName;
+
+            currentMode = mode;
+            
+            document.getElementById('login-scene').classList.remove('active');
+            document.getElementById('bg-overlay').classList.remove('active');
+            document.getElementById('main-header').classList.remove('hidden-main');
+            document.getElementById('main-game-container').classList.remove('hidden-main');
+            document.getElementById('main-game-container').classList.add('visible-main');
+
+            initPeriodicTableGrid();
+
+            if (currentMode === 'learn') {
+                setupLearningModule();
+            } else {
+                setupChallengeModule();
+            }
+        }
+
+        function setupLearningModule() {
+            document.getElementById('header-title').innerText = "Modul Belajar Kimia Interaktif";
+            document.getElementById('dashboard-mode-text').innerText = "Mode Eksplorasi Bebas";
+            document.getElementById('target-display').innerText = "Silakan klik kotak unsur untuk mempelajari materinya ✨";
+            document.getElementById('stats-area').style.display = 'none';
+            document.getElementById('pause-btn').style.display = 'none';
+            document.getElementById('next-question-btn').style.display = 'none';
+        }
+
+        function setupChallengeModule() {
+            document.getElementById('header-title').innerText = "Periodic Table Finder PRO";
+            document.getElementById('dashboard-mode-text').innerText = "Cari Unsur Berikut:";
+            document.getElementById('stats-area').style.display = 'flex';
+            document.getElementById('pause-btn').style.display = 'block';
+            
+            score = 0;
+            lives = 3;
+            isGamePaused = false;
+            isWaitingForNext = false;
+            
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('lives-display').innerText = lives;
+            
+            generateNewQuestion();
+        }
+
+        function generateNewQuestion() {
+            isWaitingForNext = false;
+            document.getElementById('next-question-btn').style.display = 'none';
+            
+            const randomIndex = Math.floor(Math.random() * elementsData.length);
+            currentTarget = elementsData[randomIndex];
+
+            const questionTypes = ['name', 'symbol', 'number'];
+            const chosenType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+
+            if (chosenType === 'name') {
+                document.getElementById('target-display').innerText = `Nama Unsur: ${currentTarget.name}`;
+            } else if (chosenType === 'symbol') {
+                document.getElementById('target-display').innerText = `Simbol Kimia: [ ${currentTarget.sym} ]`;
+            } else {
+                document.getElementById('target-display').innerText = `Nomor Atom: # ${currentTarget.num}`;
+            }
+
+            timeLeft = 15;
+            document.getElementById('timer-display').innerText = timeLeft;
+            
+            clearInterval(timerInterval);
+            startCountdownTimer();
+        }
+
+        function startCountdownTimer() {
+            timerInterval = setInterval(() => {
+                if (isGamePaused || isWaitingForNext) return;
+                
+                timeLeft--;
+                document.getElementById('timer-display').innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleAnswerResult(false, true); 
+                }
+            }, 1000);
+        }
+
+        function handleCellClick(element) {
+            displayElementInEduPanel(element);
+
+            if (currentMode === 'learn') return; 
+            if (isWaitingForNext || isGamePaused) return; 
+
+            if (element.num === currentTarget.num) {
+                handleAnswerResult(true, false);
+            } else {
+                handleAnswerResult(false, false);
+            }
+        }
+
+        function handleAnswerResult(isCorrect, isTimeout) {
+            clearInterval(timerInterval);
+            isWaitingForNext = true; 
+
+            const targetCell = document.getElementById(`cell-${currentTarget.num}`);
+
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('score-display').innerText = score;
+                if (targetCell) targetCell.classList.add('correct-flash');
+                document.getElementById('target-display').innerHTML = `✨ Tepat Sekali! (${currentTarget.name})`;
+            } else {
+                lives--;
+                document.getElementById('lives-display').innerText = lives;
+                if (targetCell) targetCell.classList.add('wrong-flash');
+                
+                if (isTimeout) {
+                    document.getElementById('target-display').innerHTML = `⏰ Waktu Habis! Jawabannya: <b>${currentTarget.name}</b>`;
+                } else {
+                    document.getElementById('target-display').innerHTML = `❌ Kurang Tepat! Jawabannya: <b>${currentTarget.name}</b>`;
+                }
+            }
+
+            displayElementInEduPanel(currentTarget);
+
+            setTimeout(() => {
+                if (targetCell) {
+                    targetCell.classList.remove('correct-flash');
+                    targetCell.classList.remove('wrong-flash');
+                }
+            }, 1500);
+
+            if (lives <= 0) {
+                endGameSession(false);
+            } else {
+                document.getElementById('next-question-btn').style.display = 'block';
+            }
+        }
+
+        function triggerNextQuestion() {
+            if (lives > 0) {
+                generateNewQuestion();
+            }
+        }
+
+        function displayElementInEduPanel(el) {
+            document.getElementById('edu-element-badge').className = `selected-element-badge ${el.cat}`;
+            document.getElementById('edu-element-badge').innerText = `No. ${el.num} | ${el.cat.toUpperCase()}`;
+            document.getElementById('edu-title').innerText = `${el.name} (${el.sym})`;
+            document.getElementById('edu-desc').innerText = el.desc || "Deskripsi edukasi belum dimasukkan.";
+            
+            const expBox = document.getElementById('edu-example');
+            if (el.example) {
+                expBox.innerText = el.example;
+                expBox.style.display = 'block';
+            } else {
+                expBox.style.display = 'none';
+            }
+        }
+
+        function showGroupInfo(groupKey) {
+            const info = groupInfo[groupKey];
+            if (info) {
+                document.getElementById('edu-element-badge').className = `selected-element-badge ${groupKey}`;
+                document.getElementById('edu-element-badge').innerText = `GOLONGAN KLASIFIKASI`;
+                document.getElementById('edu-title').innerText = info.title;
+                document.getElementById('edu-desc').innerText = info.desc;
+                document.getElementById('edu-example').style.display = 'none';
+            }
+        }
+
+        function togglePauseGame() {
+            if (currentMode === 'learn') return;
+            isGamePaused = !isGamePaused;
+            const pauseScene = document.getElementById('pause-scene');
+            const overlay = document.getElementById('bg-overlay');
+            
+            if (isGamePaused) {
+                pauseScene.classList.add('active');
+                overlay.classList.add('active');
+            } else {
+                pauseScene.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        }
+
+        function endGameSession(isWin) {
+            clearInterval(timerInterval);
+            const goScene = document.getElementById('gameover-scene');
+            const overlay = document.getElementById('bg-overlay');
+            
+            document.getElementById('modal-title').innerText = "Sesi Game Selesai!";
+            document.getElementById('modal-desc').innerText = `Bagus sekali! Skor akhir yang kamu kumpulkan adalah ${score} poin. Tetap tingkatkan pemahaman kimiamu!`;
+            
+            goScene.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        function restartGameSession() {
+            document.getElementById('gameover-scene').classList.remove('active');
+            document.getElementById('bg-overlay').classList.remove('active');
+            setupChallengeModule();
+        }
+
+        function backToMainMenu() {
+            clearInterval(timerInterval);
+            isGamePaused = false;
+            isWaitingForNext = false;
+            
+            document.getElementById('gameover-scene').classList.remove('active');
+            document.getElementById('pause-scene').classList.remove('active');
+            document.getElementById('dev-scene').classList.remove('active');
+            
+            document.getElementById('main-header').classList.add('hidden-main');
+            document.getElementById('main-game-container').classList.remove('visible-main');
+            document.getElementById('main-game-container').classList.add('hidden-main');
+            
+            document.getElementById('login-scene').classList.add('active');
+            document.getElementById('bg-overlay').classList.add('active');
+        }
+
+        function openDevModal() {
+            document.getElementById('dev-scene').classList.add('active');
+        }
+
+        function closeDevModal() {
+            document.getElementById('dev-scene').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
